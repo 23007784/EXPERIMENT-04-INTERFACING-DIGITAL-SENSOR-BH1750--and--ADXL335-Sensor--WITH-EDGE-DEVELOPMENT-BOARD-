@@ -89,6 +89,14 @@ Connect the Accelerometer sensor (ADXL335) X_OUT to any one GPIO.
 Connect the Accelerometer sensor (ADXL335) Y_OUT to any one GPIO. 
 Connect the Accelerometer sensor (ADXL335) Z_OUT to any one GPIO. 
 
+If you are using BY 521
+1.	Connect the Accelerometer sensor (BY 521) Vcc to any +5V. 
+2.	Connect the Accelerometer sensor (BY 521) GND to any GND. 
+3.	Connect the Accelerometer sensor (BY 521) SDA is connected to GPIO 2. 
+4.	Connect the Accelerometer sensor (BY 521) SCL is connected to GPIO 3. 
+5.	Connect the Accelerometer sensor (BY 521) AD0 is connected to GND.
+
+
 Experiment 4A
 ## PROGRAM (Python)
 ```
