@@ -75,6 +75,13 @@ Experiment 4B
 The Accelerometer sensor (ADXL335) D0 is connected one of the GPIO pins in Raspberry Pi 4.
 The Accelerometer sensor (ADXL335) A0 is connected one of the GPIO pins in Raspberry Pi 4.
 The Python script sets the Accelerometer sensor (ADXL335) value based on the variation in the acceleration and shown in Thingzmate Cloud and console.
+
+If you are using BY 521
+
+1.	The Accelerometer sensor (BY 521) SDA is connected one of the GPIO pin 2 in Raspberry Pi 4. 
+2.	The Accelerometer sensor (BY 521) SCL is connected one of the GPIO pin 3 in Raspberry Pi 4. 
+3.	The Python script sets the Accelerometer sensor (BY 521) value based on the variation in the acceleration and shown in Thingzmate Cloud and console.
+
 CIRCUIT DIAGRAM
 Connect the Accelerometer sensor (ADXL335) Vcc to any +5V.
 Connect the Accelerometer sensor (ADXL335) GND to any GND.
