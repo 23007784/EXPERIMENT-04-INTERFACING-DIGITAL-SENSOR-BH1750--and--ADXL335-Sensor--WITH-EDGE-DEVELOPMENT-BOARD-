@@ -52,8 +52,13 @@ The ADXL335 is a small, thin, low power, complete 3-axis accelerometer with sign
 
 <img width="493" height="103" alt="image" src="https://github.com/user-attachments/assets/26014264-621b-4ca7-9fb8-4c5ffccbee75" />
 
+<img width="465" height="397" alt="image" src="https://github.com/user-attachments/assets/5b67c072-f5b3-4efe-b553-ab125d8744a2" />
 
- ### FIGURE-03 Accelerometer sensor (ADXL335) ADXL335 module & ADXL connection WITH ETS IoT Kit
+<img width="304" height="139" alt="image" src="https://github.com/user-attachments/assets/56257edb-147b-4679-9f19-7ca7e6af895b" />
+
+
+ ### FIGURE-03 Accelerometer sensor (ADXL335) ADXL335 module & ADXL or GY 521 connection WITH ETS IoT Kit
+
 
 ## Working Principle:
 Experiment 4A
