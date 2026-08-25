@@ -2,10 +2,10 @@
 
 ---
 
-### **NAME:**  
-### **DEPARTMENT:**  
-### **ROLL NO:**  
-### **DATE OF EXPERIMENT:**  
+### **NAME:**  Nikshitha G
+### **DEPARTMENT:**  CSE(IOT)
+### **ROLL NO:**  212223110031
+### **DATE OF EXPERIMENT:**  22/08/2026
 
 ---
 
@@ -100,47 +100,430 @@ If you are using BY 521
 Experiment 4A
 ## PROGRAM (Python)
 ```
+from urllib import request
+import json
+import time
+import smbus2
+import ssl
 
+# =====================================================
+# SSL FIX
+# =====================================================
 
+ssl._create_default_https_context = ssl._create_unverified_context
+
+# =====================================================
+# BH1750 SENSOR CONFIGURATION
+# =====================================================
+
+DEVICE = 0x23
+ONE_TIME_HIGH_RES_MODE = 0x20
+
+bus = smbus2.SMBus(1)
+
+# =====================================================
+# THINGZMATE CLOUD CONFIGURATION
+# =====================================================
+
+API_KEY = "48020aa24bcb4222cdd9a6064ec9b75d"
+
+URL = "https://iot.saveetha.in:4433/api/v1/device-types/esample/devices/edgecomputing/uplink"
+
+# =====================================================
+# BH1750 READ FUNCTION
+# =====================================================
+
+def read_light():
+
+    data = bus.read_i2c_block_data(
+        DEVICE,
+        ONE_TIME_HIGH_RES_MODE,
+        2
+    )
+
+    lux = (data[0] << 8 | data[1]) / 1.2
+
+    return round(lux, 2)
+
+# =====================================================
+# START MESSAGE
+# =====================================================
+
+print("======================================")
+print("BH1750 + ThingzMate Cloud Started")
+print("======================================")
+
+time.sleep(2)
+
+# =====================================================
+# MAIN LOOP
+# =====================================================
+
+while True:
+
+    try:
+
+        # ==========================================
+        # READ SENSOR
+        # ==========================================
+
+        lux = read_light()
+
+        print("Light Intensity (Lux):", lux)
+
+        # ==========================================
+        # CREATE JSON PAYLOAD
+        # ==========================================
+
+        payload = {
+            "lux": lux
+        }
+
+        data = json.dumps(payload).encode()
+
+        print("Payload:", payload)
+
+        # ==========================================
+        # HTTP REQUEST
+        # ==========================================
+
+        req = request.Request(
+            URL,
+            method="POST"
+        )
+
+        req.add_header(
+            "Content-Type",
+            "application/json"
+        )
+
+        req.add_header(
+            "Authorization",
+            "Bearer " + API_KEY
+        )
+
+        # ==========================================
+        # SEND DATA TO THINGZMATE
+        # ==========================================
+
+        response = request.urlopen(
+            req,
+            data=data,
+            timeout=10
+        )
+
+        # ==========================================
+        # RESPONSE
+        # ==========================================
+
+        print("======================================")
+        print("Cloud Upload Success")
+        print("Server Response:", response.read().decode())
+        print("======================================")
+
+        time.sleep(5)
+
+    except KeyboardInterrupt:
+
+        print("======================================")
+        print("Program Stopped")
+        print("======================================")
+
+        break
+
+    except Exception as e:
+
+        print("======================================")
+        print("Error:", e)
+        print("======================================")
+
+        time.sleep(2)
  
-
-
-
- 
-````
-
-### OUPUT  
-
-# FIGURE -04 ADD TITILE HERE 
-
-#  FIGURE -05 ADD TITILE HERE 
-
-# FIGURE -06 ADD TITLE HERE 
-
-Experiment 4B
-## PROGRAM (Python)
 ```
 
+### OUPUT  
 
- 
+# FIGURE -04 CIRCUIT
+![alt text](image.png)
 
+#  FIGURE -05 CONSOLE 
+![alt text](image-1.png)
 
+# FIGURE -06 CLOUD 
+![alt text](<Screenshot 2026-08-01 112954.png>)
+![alt text](<Screenshot 2026-08-01 113222.png>)
 
- 
-````
+Experiment 4B
+
+## PROGRAM (Python)
+```
+from urllib import request
+import json
+import time
+import smbus2
+import math
+import ssl
+
+# =====================================================
+# SSL FIX
+# =====================================================
+ssl._create_default_https_context = ssl._create_unverified_context
+
+# =====================================================
+# MPU9250 / MPU6500 CONFIGURATION
+# =====================================================
+
+# Change to 0x69 if your sensor address is 69
+MPU_ADDR = 0x68
+
+# MPU Registers
+PWR_MGMT_1 = 0x6B
+
+ACCEL_XOUT_H = 0x3B
+ACCEL_YOUT_H = 0x3D
+ACCEL_ZOUT_H = 0x3F
+
+GYRO_XOUT_H = 0x43
+GYRO_YOUT_H = 0x45
+GYRO_ZOUT_H = 0x47
+
+# =====================================================
+# I2C SETUP
+# =====================================================
+
+bus = smbus2.SMBus(1)
+
+# Wake up MPU Sensor
+try:
+
+	bus.write_byte_data(
+		MPU_ADDR,
+		PWR_MGMT_1,
+		0
+	)
+
+	print("======================================")
+	print("MPU Sensor Initialized Successfully")
+	print("======================================")
+
+except Exception as e:
+
+	print("======================================")
+	print("MPU Sensor Connection Failed")
+	print("Check:")
+	print("1. Wiring")
+	print("2. I2C Enabled")
+	print("3. Sensor Address")
+	print("4. Power Supply")
+	print("--------------------------------------")
+	print("Error :", e)
+	print("======================================")
+
+	exit()
+
+# =====================================================
+# THINGZMATE CLOUD CONFIGURATION
+# =====================================================
+
+API_KEY = "2749df782d487c554b98fcb220c1da30"
+
+URL = "https://iot.saveetha.in:4433/api/v1/device-types/accelerator123/devices/accelerator123/uplink"
+
+# =====================================================
+# READ RAW SENSOR DATA
+# =====================================================
+
+def read_raw_data(addr):
+
+	high = bus.read_byte_data(
+		MPU_ADDR,
+		addr
+	)
+
+	low = bus.read_byte_data(
+		MPU_ADDR,
+		addr + 1
+	)
+
+	value = ((high << 8) | low)
+
+	if value > 32768:
+		value = value – 65536
+
+	return value
+
+# =====================================================
+# START MESSAGE
+# =====================================================
+
+print("======================================")
+print("MPU9250 / MPU6500 + ThingzMate Started")
+print("======================================")
+
+time.sleep(2)
+
+# =====================================================
+# MAIN LOOP
+# =====================================================
+
+while True:
+	try:
+
+# ==========================================
+# READ ACCELEROMETER
+# ==========================================
+
+		acc_x = read_raw_data(ACCEL_XOUT_H)
+		acc_y = read_raw_data(ACCEL_YOUT_H)
+		acc_z = read_raw_data(ACCEL_ZOUT_H)
+
+		Ax = acc_x / 16384.0
+		Ay = acc_y / 16384.0
+		Az = acc_z / 16384.0
+
+# ==========================================
+# READ GYROSCOPE
+# ==========================================
+
+		gyro_x = read_raw_data(GYRO_XOUT_H)
+		gyro_y = read_raw_data(GYRO_YOUT_H)
+		gyro_z = read_raw_data(GYRO_ZOUT_H)
+
+		Gx = gyro_x / 131.0
+		Gy = gyro_y / 131.0
+		Gz = gyro_z / 131.0
+
+# ==========================================
+# MOTION STATUS
+# ==========================================
+
+		motion = math.sqrt(
+			(Ax * Ax) +(Ay * Ay) +(Az * Az)
+		)	
+
+		if motion > 1.2:
+
+			status = "MOVING"
+
+		else:
+
+			status = "STABLE"
+# ==========================================
+# DISPLAY VALUES
+# ==========================================
+
+		print("======================================")
+
+		print("Accelerometer")
+
+		print("Ax :", round(Ax, 2))
+		print("Ay :", round(Ay, 2))
+		print("Az :", round(Az, 2))
+
+		print("--------------------------------------")
+
+		print("Gyroscope")
+
+		print("Gx :", round(Gx, 2))
+		print("Gy :", round(Gy, 2))
+		print("Gz :", round(Gz, 2))
+
+		print("--------------------------------------")
+
+		print("Status :", status)
+
+# ==========================================
+# JSON PAYLOAD
+# ==========================================
+
+		payload = {
+			"Ax": round(Ax, 2),
+			"Ay": round(Ay, 2),
+			"Az": round(Az, 2),
+
+			"Gx": round(Gx, 2),
+			"Gy": round(Gy, 2),
+			"Gz": round(Gz, 2),
+
+			"status": status
+		}
+
+		data = json.dumps(payload).encode()
+
+		print("--------------------------------------")
+		print("Payload :", payload)
+
+# ==========================================
+# HTTP REQUEST
+# ==========================================
+
+		req = request.Request(
+			URL,
+			method="POST"
+		)
+
+		req.add_header(
+			"Content-Type",
+			"application/json"
+		)
+
+		req.add_header(
+			"Authorization",
+			"Bearer " + API_KEY
+		)
+
+# ==========================================
+# SEND DATA TO THINGZMATE
+# ==========================================
+
+		response = request.urlopen(
+			req,
+			data=data,
+			timeout=10
+		)
+
+# ==========================================
+# CLOUD RESPONSE
+# ==========================================
+
+		print("--------------------------------------")
+		print("Cloud Upload Success")
+		print("Response :", response.read().decode())
+
+		time.sleep(5)
+
+	except KeyboardInterrupt:
+
+		print("======================================")
+		print("Program Stopped")
+		print("======================================")
+
+		break
+
+	except Exception as e:
+
+		print("======================================")
+		print("Runtime Error :", e)
+		print("======================================")
+
+		time.sleep(2)
+```
 
 ### OUPUT  
 
-# FIGURE -07 ADD TITILE HERE 
+# FIGURE -07 CIRCUIT 
+![alt text](<exp4b circuit.jpeg>)
 
-#  FIGURE -08 ADD TITILE HERE 
+#  FIGURE -08 CONSOLE 
+![alt text](exp4bConsole.jpeg)
 
-# FIGURE -09 ADD TITLE HERE 
+# FIGURE -09 ADD CLOUD 
 
+![alt text](<Screenshot 2026-08-03 153657.png>)
+![alt text](<Screenshot 2026-08-03 153345.png>)
+![alt text](<Screenshot 2026-08-03 153400.png>)
 
-
-
-## **RESULT:**  
+## RESULT:
 The **Light-Intensity sensor (BH1750) Accelerometer sensor (ADXL335)** was successfully interfaced with the **Raspberry Pi 4**, and real-time **Intensity of Light and acceleration level in ax,ay,az,gx,gy & gz** were read and displayed in Console and Thingzmate Cloud. 
 
 ---
